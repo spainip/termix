@@ -1,0 +1,5 @@
+defaultNamespace: termix
+kustomize:
+  dir: .
+helm:
+  takeOwnership: true

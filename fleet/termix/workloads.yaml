@@ -1,0 +1,341 @@
+{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "annotations": {
+      "deployment.kubernetes.io/revision": "1"
+    },
+    "labels": {
+      "kustomize.toolkit.fluxcd.io/name": "termix-termix",
+      "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+    },
+    "name": "termix",
+    "namespace": "termix"
+  },
+  "spec": {
+    "progressDeadlineSeconds": 600,
+    "replicas": 1,
+    "revisionHistoryLimit": 10,
+    "selector": {
+      "matchLabels": {
+        "app.kubernetes.io/name": "termix"
+      }
+    },
+    "strategy": {
+      "type": "Recreate"
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app.kubernetes.io/name": "termix"
+        }
+      },
+      "spec": {
+        "automountServiceAccountToken": false,
+        "containers": [
+          {
+            "args": [
+              "/entrypoint.sh"
+            ],
+            "command": [
+              "docker-entrypoint.sh"
+            ],
+            "envFrom": [
+              {
+                "secretRef": {
+                  "name": "termix-env"
+                }
+              }
+            ],
+            "image": "ghcr.io/lukegus/termix@sha256:931e4ce466f4d29b157eb8d6dcd4d36ee5114495c6edddbb19d4e360e2a60f8d",
+            "imagePullPolicy": "IfNotPresent",
+            "name": "termix",
+            "ports": [
+              {
+                "containerPort": 8080,
+                "name": "p8080-tcp",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 30001,
+                "name": "p30001-tcp",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 30002,
+                "name": "p30002-tcp",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 30003,
+                "name": "p30003-tcp",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 30004,
+                "name": "p30004-tcp",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 30005,
+                "name": "p30005-tcp",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 30006,
+                "name": "p30006-tcp",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 30007,
+                "name": "p30007-tcp",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 30008,
+                "name": "p30008-tcp",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 30009,
+                "name": "p30009-tcp",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 30010,
+                "name": "p30010-tcp",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 30011,
+                "name": "p30011-tcp",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 30012,
+                "name": "p30012-tcp",
+                "protocol": "TCP"
+              }
+            ],
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "/bin/sh",
+                  "-c",
+                  "wget -q -O /dev/null http://localhost:30001/health || exit 1"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 10
+            },
+            "resources": {
+              "requests": {
+                "cpu": "25m",
+                "memory": "64Mi"
+              }
+            },
+            "startupProbe": {
+              "exec": {
+                "command": [
+                  "/bin/sh",
+                  "-c",
+                  "wget -q -O /dev/null http://localhost:30001/health || exit 1"
+                ]
+              },
+              "failureThreshold": 180,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 10
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/app/data",
+                "name": "v-fd8debbcf34f77eb"
+              },
+              {
+                "mountPath": "/dev/shm",
+                "name": "shm"
+              }
+            ],
+            "workingDir": "/app"
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "imagePullSecrets": [
+          {
+            "name": "registry-credentials"
+          }
+        ],
+        "nodeSelector": {
+          "kubernetes.io/hostname": "spainip-k3s"
+        },
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {},
+        "terminationGracePeriodSeconds": 120,
+        "volumes": [
+          {
+            "name": "v-fd8debbcf34f77eb",
+            "persistentVolumeClaim": {
+              "claimName": "v-fd8debbcf34f77eb"
+            }
+          },
+          {
+            "emptyDir": {
+              "medium": "Memory",
+              "sizeLimit": "67108864"
+            },
+            "name": "shm"
+          }
+        ]
+      }
+    }
+  }
+}
+---
+{
+  "apiVersion": "v1",
+  "kind": "Service",
+  "metadata": {
+    "labels": {
+      "kustomize.toolkit.fluxcd.io/name": "termix-termix",
+      "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+    },
+    "name": "termix",
+    "namespace": "termix"
+  },
+  "spec": {
+    "clusterIP": "10.43.10.205",
+    "clusterIPs": [
+      "10.43.10.205"
+    ],
+    "internalTrafficPolicy": "Cluster",
+    "ipFamilies": [
+      "IPv4"
+    ],
+    "ipFamilyPolicy": "SingleStack",
+    "ports": [
+      {
+        "name": "p8080-tcp",
+        "port": 8080,
+        "protocol": "TCP",
+        "targetPort": 8080
+      },
+      {
+        "name": "p30001-tcp",
+        "port": 30001,
+        "protocol": "TCP",
+        "targetPort": 30001
+      },
+      {
+        "name": "p30002-tcp",
+        "port": 30002,
+        "protocol": "TCP",
+        "targetPort": 30002
+      },
+      {
+        "name": "p30003-tcp",
+        "port": 30003,
+        "protocol": "TCP",
+        "targetPort": 30003
+      },
+      {
+        "name": "p30004-tcp",
+        "port": 30004,
+        "protocol": "TCP",
+        "targetPort": 30004
+      },
+      {
+        "name": "p30005-tcp",
+        "port": 30005,
+        "protocol": "TCP",
+        "targetPort": 30005
+      },
+      {
+        "name": "p30006-tcp",
+        "port": 30006,
+        "protocol": "TCP",
+        "targetPort": 30006
+      },
+      {
+        "name": "p30007-tcp",
+        "port": 30007,
+        "protocol": "TCP",
+        "targetPort": 30007
+      },
+      {
+        "name": "p30008-tcp",
+        "port": 30008,
+        "protocol": "TCP",
+        "targetPort": 30008
+      },
+      {
+        "name": "p30009-tcp",
+        "port": 30009,
+        "protocol": "TCP",
+        "targetPort": 30009
+      },
+      {
+        "name": "p30010-tcp",
+        "port": 30010,
+        "protocol": "TCP",
+        "targetPort": 30010
+      },
+      {
+        "name": "p30011-tcp",
+        "port": 30011,
+        "protocol": "TCP",
+        "targetPort": 30011
+      },
+      {
+        "name": "p30012-tcp",
+        "port": 30012,
+        "protocol": "TCP",
+        "targetPort": 30012
+      }
+    ],
+    "selector": {
+      "app.kubernetes.io/name": "termix"
+    },
+    "sessionAffinity": "None",
+    "type": "ClusterIP"
+  }
+}
+---
+{
+  "apiVersion": "traefik.io/v1alpha1",
+  "kind": "IngressRoute",
+  "metadata": {
+    "labels": {
+      "kustomize.toolkit.fluxcd.io/name": "termix-termix",
+      "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+    },
+    "name": "termix-termix",
+    "namespace": "termix"
+  },
+  "spec": {
+    "entryPoints": [
+      "websecure"
+    ],
+    "routes": [
+      {
+        "kind": "Rule",
+        "match": "Host(`termix.spainip.es`)",
+        "services": [
+          {
+            "name": "termix",
+            "port": 8080
+          }
+        ]
+      }
+    ],
+    "tls": {
+      "certResolver": "acmeresolver"
+    }
+  }
+}
+---
