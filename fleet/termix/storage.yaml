@@ -1,59 +1,7 @@
 {
   "apiVersion": "v1",
-  "kind": "PersistentVolume",
-  "metadata": {
-    "annotations": {
-      "kustomize.toolkit.fluxcd.io/prune": "disabled"
-    },
-    "finalizers": [
-      "kubernetes.io/pv-protection"
-    ],
-    "labels": {
-      "kustomize.toolkit.fluxcd.io/name": "cutover-storage",
-      "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
-    },
-    "name": "termix-v-fd8debbcf34f77eb"
-  },
-  "spec": {
-    "accessModes": [
-      "ReadWriteOnce"
-    ],
-    "capacity": {
-      "storage": "1Gi"
-    },
-    "local": {
-      "path": "/opt/stacks/termix/data"
-    },
-    "nodeAffinity": {
-      "required": {
-        "nodeSelectorTerms": [
-          {
-            "matchExpressions": [
-              {
-                "key": "kubernetes.io/hostname",
-                "operator": "In",
-                "values": [
-                  "spainip-k3s"
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    },
-    "persistentVolumeReclaimPolicy": "Retain",
-    "volumeMode": "Filesystem"
-  }
-}
----
-{
-  "apiVersion": "v1",
   "kind": "PersistentVolumeClaim",
   "metadata": {
-    "annotations": {
-      "kustomize.toolkit.fluxcd.io/prune": "disabled",
-      "pv.kubernetes.io/bind-completed": "yes"
-    },
     "finalizers": [
       "kubernetes.io/pvc-protection"
     ],
@@ -70,12 +18,10 @@
     ],
     "resources": {
       "requests": {
-        "storage": "1Gi"
+        "storage": "2Gi"
       }
     },
-    "storageClassName": "",
-    "volumeMode": "Filesystem",
-    "volumeName": "termix-v-fd8debbcf34f77eb"
+    "storageClassName": "retained-local-path",
+    "volumeMode": "Filesystem"
   }
 }
----
